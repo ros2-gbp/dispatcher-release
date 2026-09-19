@@ -1,0 +1,23 @@
+workspace: .
+
+variables:
+  - name: FCAT_LOOP_RATE_HZ
+    choices:
+    - 1000
+    - 500
+    - 250
+    - 100
+
+nodes:
+  - name: fcat
+    ros_nodes:
+    - name: /fcat/fcat
+    cmd: ros2 launch robot_bringup fcat_offline.py --rate $FCAT_LOOP_RATE_HZ
+    start_checked: true
+
+scripts:
+  - name: "Print Hostname and LOOP_RATE"
+    cmd: cat /etc/hostname && echo Loop rate $FCAT_LOOP_RATE_HZ
+    row: 0
+    column: 0
+    use_terminal: false

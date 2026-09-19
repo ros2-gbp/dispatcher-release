@@ -1,0 +1,61 @@
+workspace: .
+
+cmd_prefix: RMW_IMPLEMENTATION=rmw_cyclonedds_cpp CYCLONEDDS_URI=/etc/cyclonedds.xml
+
+configurations:
+  - online-test-no-config-available
+  - online
+  - offline
+
+nodes:
+  - name: commander
+    namespace: /commander
+    node_name: commander
+    cmd: ros2 run commander commander
+    start_checked: true
+    stop_tmux_cmd: "C-D"
+
+  - name: motor control
+    type: category # Use this type to define a collapsible category of proceses
+    items:
+    - name: fcat
+      type: ros
+      ros_nodes:
+      - name: /fcat/fcat
+      configurations:
+      - name: online
+        cmd: ros2 launch install/asimov_bringup/share/asimov_bringup/launch/fcat_online.py
+      - name: offline
+        cmd: ros2 launch install/asimov_bringup/share/asimov_bringup/launch/fcat_offline.py
+      start_checked: true
+
+
+  - name: sensors
+    type: category 
+    items:
+    - name: ping1_but_this_is_a_very_long_name_to_demonstrate_elided
+      type: shell
+      configurations:
+      - name: online
+        cmd: ping google.com
+      - name: offline
+        cmd: ping asimov-dev
+      start_checked: true
+
+    - name: ping1_2
+      type: shell
+      configurations:
+      - name: online
+        cmd: ping google.com
+      - name: offline
+        cmd: ping asimov-dev
+      start_checked: true
+
+    - name: ping2
+      type: shell
+      configurations:
+      - name: online
+        cmd: ping google.com
+      - name: offline
+        cmd: ping asimov-dev
+      start_checked: true

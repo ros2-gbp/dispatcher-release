@@ -1,0 +1,32 @@
+workspace: .
+
+nodes:
+
+  - name: commander
+    node_name: /commander/commander
+    cmd: ros2 run commander commander
+    start_checked: true
+    stop_tmux_cmd: "C-D"
+
+scripts:
+
+  - name: kst
+    cmd: kst2 &
+    icon: :/icons/plot.png
+    row: 0
+    column: 0
+    use_terminal: false
+
+  - name: htop
+    cmd: htop
+    icon: :/icons/terminal.png
+    row: 0
+    column: 1
+    use_terminal: true
+
+  - name: rqt_graph
+    cmd: ros2 run rqt_graph rqt_graph &
+    row: 1
+    column: 0
+    use_terminal: false
+

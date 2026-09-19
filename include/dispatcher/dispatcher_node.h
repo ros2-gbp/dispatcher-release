@@ -1,0 +1,120 @@
+#ifndef DISPATCHER_NODE_H_
+#define DISPATCHER_NODE_H_
+
+#include "dispatcher/process_item.h"
+#include "dispatcher/script_item.h"
+#include "dispatcher/variable.h"
+
+#include <map>
+#include <unordered_map>
+#include <vector>
+
+#include <QGridLayout>
+#include <rclcpp/node_interfaces/node_graph.hpp>
+#include <sensor_msgs/msg/joint_state.hpp>
+
+namespace dispatcher
+{
+class DispatcherWidget;
+
+class DispatcherNode : public rclcpp::Node
+{
+ public:
+  /*! @brief Creates the dispatcher ROS node and loads the configured UI model. */
+  DispatcherNode(DispatcherWidget*);
+  /*! @brief Destroys the dispatcher node. */
+  ~DispatcherNode();
+
+  /*! @brief Supported YAML item types handled by dispatcher. */
+  enum ItemType {
+    CATEGORY = 0,  // A Dispatcher construct to signal there will be multiple
+                   // Items and to lump them all into one category
+    ROS,           // Items that are ros_nodes
+    SHELL,         // Items that are executables called from shell
+    UNDEF,         // Unsupported
+  };
+
+  /*! @brief Shared configuration data applied to items by configuration name. */
+  struct Configuration {
+    std::map<std::string, std::string> environment_variables;
+    std::string                        cmd_prefix;
+    std::string                        icon;
+  };
+
+  /*! @brief Returns the currently observed online ROS nodes and namespaces. */
+  const std::vector<std::pair<std::string, std::string>>& get_online_nodes()
+  {
+    return online_nodes_;
+  }
+  /*! @brief Returns the configured workspace path used by ROS process items. */
+  const std::string& get_workspace() { return workspace_; }
+  /*! @brief Returns whether unavailable items should be hidden instead of disabled. */
+  bool&              should_hide_unconfigured_process()
+  {
+    return hide_unconfigured_processes_;
+  }
+  /*!
+  @brief Returns the effective command prefix for a configuration.
+  @param configuration Selected configuration name.
+  @return Configuration-specific prefix or the `all` fallback.
+  */
+  const std::string& get_cmd_prefix(const std::string& configuration);
+  /*!
+  @brief Returns the effective environment variables for a configuration.
+  @param configuration Selected configuration name.
+  @return Configuration-specific variables or the `all` fallback.
+  */
+  const std::map<std::string, std::string>& get_environment_variables(
+      const std::string& configuration);
+  /*! @brief Returns the SSH timeout used for remote command construction. */
+  int          get_ssh_timeout_sec() { return ssh_timeout_sec_; }
+  /*! @brief Polls online state and updates all dispatcher items. */
+  void         Process();
+  /*! @brief Starts all items whose checkbox is currently enabled and checked. */
+  void         StartChecked();
+  /*! @brief Stops all items whose checkbox is currently checked. */
+  void         StopChecked();
+  /*! @brief Stops all items and tears down their tmux sessions. */
+  void         StopAll();
+  /*! @brief Applies the currently selected configuration to all items and scripts. */
+  void         UpdateConfiguration();
+  /*! @brief Enables or disables all variable controls in the widget. */
+  void         EnableVariables(bool);
+  /*! @brief Returns the active variable widgets used for command substitution. */
+  const std::vector<dispatcher::Variable*>& GetVariables()
+  {
+    return variables_;
+  }
+  /*! @brief Returns the configured main loop rate in hertz. */
+  double GetTimerRate() const { return target_loop_rate_hz_; }
+
+ private:
+  bool                                  last_online_state_           = false;
+  bool                                  tmux_sessions_configured_    = false;
+  bool                                  hide_unconfigured_processes_ = false;
+  bool                                  start_checked_on_startup_    = false;
+  std::string                           dispatcher_config_path_;
+  std::string                           initial_configuration_;
+  int                                   ssh_timeout_sec_ = 10;
+  std::vector<dispatcher::ProcessItem*> dispatcher_items_;
+  std::vector<dispatcher::ScriptItem*>  script_items_;
+  std::vector<dispatcher::Variable*>    variables_;
+  std::string                           workspace_;
+  std::shared_ptr<rclcpp::node_interfaces::NodeGraph> node_graph_;
+  std::vector<std::pair<std::string, std::string>>    online_nodes_;
+  std::map<std::string, Configuration>                configurations_;
+  double                                             target_loop_rate_hz_ = 10.0;
+
+  void              ParseConfig();
+  void              AddConfiguration(const std::string&, const YAML::Node&);
+  void              AddItem(ItemType, const YAML::Node&, QGridLayout*);
+  void              SetupTmuxSessions();
+  void              CleanupTmuxSessions();
+  ItemType          GetItemTypeFromStr(std::string);
+  std::string       ItemTypeToStr(ItemType);
+  DispatcherWidget* widget_ = nullptr;
+};
+
+}  // namespace dispatcher
+
+#endif
