@@ -1,0 +1,12 @@
+Source: ros-rolling-dispatcher
+Section: misc
+Priority: optional
+Maintainer: "Kristopher Wehage" <kwehage@jpl.nasa.gov>
+Build-Depends: debhelper (>= 9.0.0), libqt5opengl5-dev, libyaml-cpp-dev, qtbase5-dev, ros-rolling-ament-cmake, ros-rolling-ament-cmake-gtest <!nocheck>, ros-rolling-ament-lint-auto <!nocheck>, ros-rolling-ament-lint-common <!nocheck>, ros-rolling-builtin-interfaces, ros-rolling-rclcpp, ros-rolling-sensor-msgs, ros-rolling-std-msgs, ros-rolling-std-srvs, ros-rolling-ros-workspace
+Homepage: https://index.ros.org/p/dispatcher/#rolling
+Standards-Version: 3.9.2
+
+Package: ros-rolling-dispatcher
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}, libqt5opengl5-dev, libyaml-cpp-dev, qtbase5-dev, ros-rolling-builtin-interfaces, ros-rolling-rclcpp, ros-rolling-sensor-msgs, ros-rolling-std-msgs, ros-rolling-std-srvs, tmux, ros-rolling-ros-workspace
+Description: Qt-based ROS 2 application for launching and monitoring ROS nodes and arbitrary processes.
