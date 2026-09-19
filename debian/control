@@ -1,0 +1,12 @@
+Source: ros-jazzy-dispatcher
+Section: misc
+Priority: optional
+Maintainer: "Kristopher Wehage" <kwehage@jpl.nasa.gov>
+Build-Depends: debhelper (>= 9.0.0), libqt5opengl5-dev, libyaml-cpp-dev, qtbase5-dev, ros-jazzy-ament-cmake, ros-jazzy-ament-cmake-gtest <!nocheck>, ros-jazzy-ament-lint-auto <!nocheck>, ros-jazzy-ament-lint-common <!nocheck>, ros-jazzy-builtin-interfaces, ros-jazzy-rclcpp, ros-jazzy-sensor-msgs, ros-jazzy-std-msgs, ros-jazzy-std-srvs, ros-jazzy-ros-workspace
+Homepage: https://index.ros.org/p/dispatcher/#jazzy
+Standards-Version: 3.9.2
+
+Package: ros-jazzy-dispatcher
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}, libqt5opengl5-dev, libyaml-cpp-dev, qtbase5-dev, ros-jazzy-builtin-interfaces, ros-jazzy-rclcpp, ros-jazzy-sensor-msgs, ros-jazzy-std-msgs, ros-jazzy-std-srvs, tmux, ros-jazzy-ros-workspace
+Description: Qt-based ROS 2 application for launching and monitoring ROS nodes and arbitrary processes.
